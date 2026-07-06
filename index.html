@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring 2026 Exam Tracker</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #48bb78;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --ash: #cbd5e0;
+            --warning-bg: #feebc8;
+            --warning-text: #c05621;
+            --safe-bg: #c6f6d5;
+            --safe-text: #276749;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .exam-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--secondary);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* State when exam is over (Ash color) */
+        .exam-card.is-over {
+            border-top-color: var(--ash);
+            background-color: #e2e8f0;
+            opacity: 0.7;
+            filter: grayscale(80%);
+        }
+
+        .exam-card.is-over * {
+            color: #4a5568 !important;
+        }
+        
+        .gap-badge {
+            align-self: flex-start;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .gap-safe { background-color: var(--safe-bg); color: var(--safe-text); }
+        .gap-warning { background-color: var(--warning-bg); color: var(--warning-text); }
+        .gap-start { background-color: #e2e8f0; color: #4a5568; }
+
+        .course-code {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--secondary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.5rem 0 1rem 0;
+            line-height: 1.3;
+        }
+
+        .exam-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .countdown {
+            font-family: monospace;
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--primary);
+            background: #ebf8ff;
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .exam-card.is-over .countdown {
+            background: #cbd5e0;
+            text-decoration: line-through;
+        }
+
+        .tasks-container {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Checkbox as toggle button styling */
+        .task-item {
+            position: relative;
+        }
+
+        .task-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .task-label {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background-color: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover .task-checkbox:not(:checked) ~ .task-label {
+            background-color: #e2e8f0;
+        }
+
+        .task-checkbox:checked ~ .task-label {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+        }
+
+        .exam-card.is-over .task-checkbox:checked ~ .task-label {
+            background-color: #718096;
+            border-color: #718096;
+            box-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 2rem; }
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Shuvajit's Spring 2026 Exam Tracker</h1>
+        <p>Morning Session (9:30 AM – 12:00 PM) | B.Sc. in EEE</p>
+    </div>
+
+    <div class="container" id="exam-container">
+        <!-- Cards will be generated here by JavaScript -->
+    </div>
+
+    <script>
+        // Array of exam data based on your specific routine
+        const exams = [
+            { id: "eee1201", code: "EEE-1201", title: "Electrical Circuit-II", date: "2026-07-11T09:30:00+06:00" },
+            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-12T09:30:00+06:00" },
+            { id: "me2301", code: "ME-2301", title: "Fundamentals of Mechanical Engineering", date: "2026-07-15T09:30:00+06:00" },
+            { id: "math1207", code: "MATH-1207", title: "Mathematics-II", date: "2026-07-18T09:30:00+06:00" },
+            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-19T09:30:00+06:00" },
+            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-22T09:30:00+06:00" },
+            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-07-25T09:30:00+06:00" }
+        ];
+
+        // The checklist tasks for each exam
+        const tasks = [
+            { id: "theory", label: " ✓ Theory Read" },
+            { id: "pq", label: "✓ Previous Question Solve" },
+            { id: "rev", label: "✓ Final Revision" }
+        ];
+
+        const container = document.getElementById("exam-container");
+
+        // Initialize the UI and generate the cards
+        function renderExams() {
+            exams.forEach((exam, index) => {
+                const examDateObj = new Date(exam.date);
+                const dateString = examDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const dayString = examDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
+
+                // --- Calculate the gap ---
+                let gapBadgeHTML = "";
+                if (index === 0) {
+                    gapBadgeHTML = `<div class="gap-badge gap-start">🚀 First Exam</div>`;
+                } else {
+                    const prevDate = new Date(exams[index - 1].date);
+                    const currDate = new Date(exam.date);
+                    
+                    // Reset times to midnight to ensure clean day math
+                    prevDate.setHours(0,0,0,0);
+                    currDate.setHours(0,0,0,0);
+                    
+                    const diffTime = Math.abs(currDate - prevDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const gapDays = diffDays - 1; // Subtract 1 to get the blank days in between
+
+                    if (gapDays === 0) {
+                        gapBadgeHTML = `<div class="gap-badge gap-warning">⚠️ No Gap (Back-to-back)</div>`;
+                    } else if (gapDays === 1) {
+                        gapBadgeHTML = `<div class="gap-badge gap-safe">⏳ 1 Day Gap</div>`;
+                    } else {
+                        gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
+                    }
+                }
+
+                const card = document.createElement("div");
+                card.className = "exam-card";
+                card.id = `card-${exam.id}`;
+
+                let cardHTML = `
+                    ${gapBadgeHTML}
+                    <div class="course-code">${exam.code}</div>
+                    <div class="course-title">${exam.title}</div>
+                    <div class="exam-details">
+                        <span>📅 ${dateString}</span>
+                        <span>🗓️ ${dayString}</span>
+                    </div>
+                    <div class="countdown" id="timer-${exam.id}">Calculating...</div>
+                    <div class="tasks-container">
+                `;
+
+                // Add tracking buttons and restore saved state from Local Storage
+                tasks.forEach(task => {
+                    const storageKey = `${exam.id}-${task.id}`;
+                    const isChecked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
+                    
+                    cardHTML += `
+                        <div class="task-item">
+                            <input type="checkbox" id="${storageKey}" class="task-checkbox" ${isChecked} onchange="saveProgress('${storageKey}', this.checked)">
+                            <label for="${storageKey}" class="task-label">${task.label}</label>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `</div>`;
+                card.innerHTML = cardHTML;
+                container.appendChild(card);
+            });
+        }
+
+        // Save toggle state so it stays when you refresh or reopen the file
+        window.saveProgress = function(key, isChecked) {
+            localStorage.setItem(key, isChecked);
+        };
+
+        // Update the timers every second
+        function updateTimers() {
+            const now = new Date().getTime();
+
+            exams.forEach(exam => {
+                const examTime = new Date(exam.date).getTime();
+                // Exam ends at 12:00 PM (2.5 hours after 9:30 AM)
+                const examEndTime = examTime + (2.5 * 60 * 60 * 1000); 
+                const cardElement = document.getElementById(`card-${exam.id}`);
+                const timerElement = document.getElementById(`timer-${exam.id}`);
+
+                if (!cardElement || !timerElement) return;
+
+                // 1. If exam is completely over
+                if (now > examEndTime) {
+                    if (!cardElement.classList.contains("is-over")) {
+                        cardElement.classList.add("is-over");
+                    }
+                    timerElement.innerHTML = "Exam Completed";
+                    timerElement.style.color = "inherit";
+                    return;
+                } 
+                
+                // 2. If exam is currently running (between 9:30 AM and 12:00 PM)
+                if (now >= examTime && now <= examEndTime) {
+                    timerElement.innerHTML = "Exam in Progress! ✍️";
+                    timerElement.style.color = "#e53e3e"; // Red color
+                    return;
+                }
+
+                // 3. If exam is in the future, calculate remaining time safely
+                const distance = examTime - now;
+                
+                const msPerSecond = 1000;
+                const msPerMinute = msPerSecond * 60;
+                const msPerHour = msPerMinute * 60;
+                const msPerDay = msPerHour * 24;
+
+                const days = Math.floor(distance / msPerDay);
+                const hours = Math.floor((distance % msPerDay) / msPerHour);
+                const minutes = Math.floor((distance % msPerHour) / msPerMinute);
+                const seconds = Math.floor((distance % msPerMinute) / msPerSecond);
+
+                timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            });
+        }
+
+        // Run the setup functions
+        renderExams();
+        updateTimers(); // Call immediately to prevent delay
+        setInterval(updateTimers, 1000); // Update every second
+
+    </script>
+</body>
+</html>
