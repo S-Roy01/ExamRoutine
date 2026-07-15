@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spring 2026 Exam Tracker</title>
+    <title>Spring 2026 Exam Tracker (Updated)</title>
     <style>
         :root {
             --primary: #1a365d;
@@ -18,6 +18,12 @@
             --warning-text: #c05621;
             --safe-bg: #c6f6d5;
             --safe-text: #276749;
+            
+            /* FIFA Theme Colors */
+            --fifa-gold: #d4af37;
+            --fifa-bg: #f8fbf4;
+            --fifa-timer-bg: #fef08a;
+            --fifa-timer-text: #854d0e;
         }
 
         * {
@@ -74,6 +80,27 @@
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* FIFA Card Special Styling */
+        .exam-card.fifa-card {
+            border-top-color: var(--fifa-gold);
+            background-color: var(--fifa-bg);
+        }
+        
+        .fifa-card .course-code {
+            color: var(--fifa-gold);
+        }
+
+        .fifa-card .countdown {
+            background: var(--fifa-timer-bg);
+            color: var(--fifa-timer-text);
+        }
+
+        .fifa-card .task-checkbox:checked ~ .task-label {
+            background-color: #eab308;
+            border-color: #eab308;
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3);
+        }
+
         /* State when exam is over (Ash color) */
         .exam-card.is-over {
             border-top-color: var(--ash);
@@ -98,6 +125,7 @@
         .gap-safe { background-color: var(--safe-bg); color: var(--safe-text); }
         .gap-warning { background-color: var(--warning-bg); color: var(--warning-text); }
         .gap-start { background-color: #e2e8f0; color: #4a5568; }
+        .gap-fifa { background-color: var(--fifa-gold); color: white; }
 
         .course-code {
             font-size: 0.9rem;
@@ -201,31 +229,25 @@
 <body>
 
     <div class="header">
-        <h1>Shuvajit's Spring 2026 Exam Tracker</h1>
-        <p>Morning Session (9:30 AM – 12:00 PM) | B.Sc. in EEE</p>
+        <h1>Shuvajit's Spring 2026 Tracker</h1>
+        <p>Revised Routine (15.07.2026) | B.Sc. in EEE</p>
     </div>
 
     <div class="container" id="exam-container">
-        <!-- Cards will be generated here by JavaScript -->
-    </div>
+        </div>
 
     <script>
-        // Array of exam data based on your specific routine
+        // Updated array of exam data based on the revised routine
         const exams = [
-            { id: "eee1201", code: "EEE-1201", title: "Electrical Circuit-II", date: "2026-07-11T09:30:00+06:00" },
-            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-12T09:30:00+06:00" },
             { id: "me2301", code: "ME-2301", title: "Fundamentals of Mechanical Engineering", date: "2026-07-15T09:30:00+06:00" },
             { id: "math1207", code: "MATH-1207", title: "Mathematics-II", date: "2026-07-18T09:30:00+06:00" },
-            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-19T09:30:00+06:00" },
-            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-22T09:30:00+06:00" },
-            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-07-25T09:30:00+06:00" }
-        ];
-
-        // The checklist tasks for each exam
-        const tasks = [
-            { id: "theory", label: " ✓ Theory Read" },
-            { id: "pq", label: "✓ Previous Question Solve" },
-            { id: "rev", label: "✓ Final Revision" }
+            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-19T09:30:00+06:00" },
+            // FIFA World Cup Final Event injected right into the schedule
+            { id: "fifa", code: "⚽ MATCH DAY", title: "🏆 World Cup Final: Spain vs Argentina", date: "2026-07-20T01:00:00+06:00", type: "event" },
+            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-22T09:30:00+06:00" },
+            { id: "eee1201", code: "EEE-1201", title: "Electrical Circuit-II", date: "2026-07-25T09:30:00+06:00" },
+            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-26T09:30:00+06:00" },
+            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-08-02T09:30:00+06:00" }
         ];
 
         const container = document.getElementById("exam-container");
@@ -234,36 +256,55 @@
         function renderExams() {
             exams.forEach((exam, index) => {
                 const examDateObj = new Date(exam.date);
+                
+                // Format the time correctly based on if it's an exam or the match
+                const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+                let timeString = examDateObj.toLocaleTimeString('en-US', timeOptions);
                 const dateString = examDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 const dayString = examDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
 
-                // --- Calculate the gap ---
+                // --- Gap Calculator Logic ---
                 let gapBadgeHTML = "";
-                if (index === 0) {
-                    gapBadgeHTML = `<div class="gap-badge gap-start">🚀 First Exam</div>`;
+                
+                if (exam.type === "event") {
+                    gapBadgeHTML = `<div class="gap-badge gap-fifa">🎉 Study Break</div>`;
                 } else {
-                    const prevDate = new Date(exams[index - 1].date);
-                    const currDate = new Date(exam.date);
-                    
-                    // Reset times to midnight to ensure clean day math
-                    prevDate.setHours(0,0,0,0);
-                    currDate.setHours(0,0,0,0);
-                    
-                    const diffTime = Math.abs(currDate - prevDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    const gapDays = diffDays - 1; // Subtract 1 to get the blank days in between
+                    // Find the actual previous EXAM (skip events like FIFA so study gaps remain accurate)
+                    let prevExam = null;
+                    for (let i = index - 1; i >= 0; i--) {
+                        if (exams[i].type !== "event") {
+                            prevExam = exams[i];
+                            break;
+                        }
+                    }
 
-                    if (gapDays === 0) {
-                        gapBadgeHTML = `<div class="gap-badge gap-warning">⚠️ No Gap (Back-to-back)</div>`;
-                    } else if (gapDays === 1) {
-                        gapBadgeHTML = `<div class="gap-badge gap-safe">⏳ 1 Day Gap</div>`;
+                    if (!prevExam) {
+                        gapBadgeHTML = `<div class="gap-badge gap-start">🚀 First Exam</div>`;
                     } else {
-                        gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
+                        const prevDate = new Date(prevExam.date);
+                        const currDate = new Date(exam.date);
+                        
+                        // Reset times to midnight to ensure clean day math
+                        prevDate.setHours(0,0,0,0);
+                        currDate.setHours(0,0,0,0);
+                        
+                        const diffTime = Math.abs(currDate - prevDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const gapDays = diffDays - 1;
+
+                        if (gapDays === 0) {
+                            gapBadgeHTML = `<div class="gap-badge gap-warning">⚠️ No Gap (Back-to-back)</div>`;
+                        } else if (gapDays === 1) {
+                            gapBadgeHTML = `<div class="gap-badge gap-safe">⏳ 1 Day Gap</div>`;
+                        } else {
+                            gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
+                        }
                     }
                 }
 
+                // Create the Card DOM Element
                 const card = document.createElement("div");
-                card.className = "exam-card";
+                card.className = exam.type === "event" ? "exam-card fifa-card" : "exam-card";
                 card.id = `card-${exam.id}`;
 
                 let cardHTML = `
@@ -272,14 +313,30 @@
                     <div class="course-title">${exam.title}</div>
                     <div class="exam-details">
                         <span>📅 ${dateString}</span>
-                        <span>🗓️ ${dayString}</span>
+                        <span>⏰ ${dayString}, ${timeString}</span>
                     </div>
                     <div class="countdown" id="timer-${exam.id}">Calculating...</div>
                     <div class="tasks-container">
                 `;
 
+                // Set checklist items (Study tasks vs FIFA tasks)
+                let currentTasks = [];
+                if (exam.type === "event") {
+                    currentTasks = [
+                        { id: "snacks", label: "🍿 Snacks Ready" },
+                        { id: "jersey", label: "👕 Jersey On" },
+                        { id: "alarm", label: "⏰ Alarm Set" }
+                    ];
+                } else {
+                    currentTasks = [
+                        { id: "theory", label: "Theory Read" },
+                        { id: "pq", label: "PQ Solved" },
+                        { id: "rev", label: "Final Revision" }
+                    ];
+                }
+
                 // Add tracking buttons and restore saved state from Local Storage
-                tasks.forEach(task => {
+                currentTasks.forEach(task => {
                     const storageKey = `${exam.id}-${task.id}`;
                     const isChecked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
                     
@@ -297,7 +354,6 @@
             });
         }
 
-        // Save toggle state so it stays when you refresh or reopen the file
         window.saveProgress = function(key, isChecked) {
             localStorage.setItem(key, isChecked);
         };
@@ -308,31 +364,31 @@
 
             exams.forEach(exam => {
                 const examTime = new Date(exam.date).getTime();
-                // Exam ends at 12:00 PM (2.5 hours after 9:30 AM)
-                const examEndTime = examTime + (2.5 * 60 * 60 * 1000); 
+                // Assume 2.5 hours duration for both exams and the football match (including extra time/penalties)
+                const eventEndTime = examTime + (2.5 * 60 * 60 * 1000); 
                 const cardElement = document.getElementById(`card-${exam.id}`);
                 const timerElement = document.getElementById(`timer-${exam.id}`);
 
                 if (!cardElement || !timerElement) return;
 
-                // 1. If exam is completely over
-                if (now > examEndTime) {
+                // 1. If event is completely over
+                if (now > eventEndTime) {
                     if (!cardElement.classList.contains("is-over")) {
                         cardElement.classList.add("is-over");
                     }
-                    timerElement.innerHTML = "Exam Completed";
+                    timerElement.innerHTML = exam.type === "event" ? "Match Completed" : "Exam Completed";
                     timerElement.style.color = "inherit";
                     return;
                 } 
                 
-                // 2. If exam is currently running (between 9:30 AM and 12:00 PM)
-                if (now >= examTime && now <= examEndTime) {
-                    timerElement.innerHTML = "Exam in Progress! ✍️";
-                    timerElement.style.color = "#e53e3e"; // Red color
+                // 2. If event is currently running
+                if (now >= examTime && now <= eventEndTime) {
+                    timerElement.innerHTML = exam.type === "event" ? "Match Live! ⚽" : "Exam in Progress! ✍️";
+                    timerElement.style.color = exam.type === "event" ? "#b45309" : "#e53e3e"; 
                     return;
                 }
 
-                // 3. If exam is in the future, calculate remaining time safely
+                // 3. Calculate remaining time
                 const distance = examTime - now;
                 
                 const msPerSecond = 1000;
@@ -351,8 +407,8 @@
 
         // Run the setup functions
         renderExams();
-        updateTimers(); // Call immediately to prevent delay
-        setInterval(updateTimers, 1000); // Update every second
+        updateTimers(); 
+        setInterval(updateTimers, 1000);
 
     </script>
 </body>
