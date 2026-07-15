@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring 2026 Exam Tracker (General)</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #48bb78;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --ash: #cbd5e0;
+            --warning-bg: #feebc8;
+            --warning-text: #c05621;
+            --safe-bg: #c6f6d5;
+            --safe-text: #276749;
+            
+            /* FIFA Theme Colors */
+            --fifa-gold: #d4af37;
+            --fifa-bg: #f8fbf4;
+            --fifa-timer-bg: #fef08a;
+            --fifa-timer-text: #854d0e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .exam-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--secondary);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* FIFA Card Special Styling */
+        .exam-card.fifa-card {
+            border-top-color: var(--fifa-gold);
+            background-color: var(--fifa-bg);
+        }
+        
+        .fifa-card .course-code {
+            color: var(--fifa-gold);
+        }
+
+        .fifa-card .countdown {
+            background: var(--fifa-timer-bg);
+            color: var(--fifa-timer-text);
+        }
+
+        .fifa-card .task-checkbox:checked ~ .task-label {
+            background-color: #eab308;
+            border-color: #eab308;
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3);
+        }
+
+        /* State when exam is over (Ash color) */
+        .exam-card.is-over {
+            border-top-color: var(--ash);
+            background-color: #e2e8f0;
+            opacity: 0.7;
+            filter: grayscale(80%);
+        }
+
+        .exam-card.is-over * {
+            color: #4a5568 !important;
+        }
+        
+        .gap-badge {
+            align-self: flex-start;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .gap-safe { background-color: var(--safe-bg); color: var(--safe-text); }
+        .gap-warning { background-color: var(--warning-bg); color: var(--warning-text); }
+        .gap-start { background-color: #e2e8f0; color: #4a5568; }
+        .gap-fifa { background-color: var(--fifa-gold); color: white; }
+
+        .course-code {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--secondary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.5rem 0 1rem 0;
+            line-height: 1.3;
+        }
+
+        .exam-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .countdown {
+            font-family: monospace;
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--primary);
+            background: #ebf8ff;
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .exam-card.is-over .countdown {
+            background: #cbd5e0;
+            text-decoration: line-through;
+        }
+
+        .tasks-container {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Checkbox as toggle button styling */
+        .task-item {
+            position: relative;
+        }
+
+        .task-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .task-label {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background-color: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover .task-checkbox:not(:checked) ~ .task-label {
+            background-color: #e2e8f0;
+        }
+
+        .task-checkbox:checked ~ .task-label {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+        }
+
+        .exam-card.is-over .task-checkbox:checked ~ .task-label {
+            background-color: #718096;
+            border-color: #718096;
+            box-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 2rem; }
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>EEE Batch Exam Tracker</h1>
+        <p>Revised Routine (15.07.2026) | B.Sc. in EEE</p>
+    </div>
+
+    <div class="container" id="exam-container">
+        </div>
+
+    <script>
+        // Updated array for the general batch (No Circuit 2, No Math 2, Added Stat)
+        const exams = [
+            { id: "me2301", code: "ME-2301", title: "Fundamentals of Mechanical Engineering", date: "2026-07-15T09:30:00+06:00" },
+            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-19T09:30:00+06:00" },
+            { id: "fifa", code: "⚽ MATCH DAY", title: "🏆 World Cup Final: Spain vs Argentina", date: "2026-07-20T01:00:00+06:00", type: "event" },
+            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-22T09:30:00+06:00" },
+            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-26T09:30:00+06:00" },
+            { id: "stat2303", code: "STAT-2303", title: "Probability & Statistics", date: "2026-07-29T09:30:00+06:00" },
+            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-08-02T09:30:00+06:00" }
+        ];
+
+        const container = document.getElementById("exam-container");
+
+        function renderExams() {
+            exams.forEach((exam, index) => {
+                const examDateObj = new Date(exam.date);
+                
+                const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+                let timeString = examDateObj.toLocaleTimeString('en-US', timeOptions);
+                const dateString = examDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const dayString = examDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
+
+                // --- Gap Calculator Logic ---
+                let gapBadgeHTML = "";
+                
+                if (exam.type === "event") {
+                    gapBadgeHTML = `<div class="gap-badge gap-fifa">🎉 Study Break</div>`;
+                } else {
+                    let prevExam = null;
+                    for (let i = index - 1; i >= 0; i--) {
+                        if (exams[i].type !== "event") {
+                            prevExam = exams[i];
+                            break;
+                        }
+                    }
+
+                    if (!prevExam) {
+                        gapBadgeHTML = `<div class="gap-badge gap-start">🚀 First Exam</div>`;
+                    } else {
+                        const prevDate = new Date(prevExam.date);
+                        const currDate = new Date(exam.date);
+                        
+                        prevDate.setHours(0,0,0,0);
+                        currDate.setHours(0,0,0,0);
+                        
+                        const diffTime = Math.abs(currDate - prevDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const gapDays = diffDays - 1;
+
+                        if (gapDays === 0) {
+                            gapBadgeHTML = `<div class="gap-badge gap-warning">⚠️ No Gap (Back-to-back)</div>`;
+                        } else if (gapDays === 1) {
+                            gapBadgeHTML = `<div class="gap-badge gap-safe">⏳ 1 Day Gap</div>`;
+                        } else {
+                            gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
+                        }
+                    }
+                }
+
+                const card = document.createElement("div");
+                card.className = exam.type === "event" ? "exam-card fifa-card" : "exam-card";
+                card.id = `card-${exam.id}`;
+
+                let cardHTML = `
+                    ${gapBadgeHTML}
+                    <div class="course-code">${exam.code}</div>
+                    <div class="course-title">${exam.title}</div>
+                    <div class="exam-details">
+                        <span>📅 ${dateString}</span>
+                        <span>⏰ ${dayString}, ${timeString}</span>
+                    </div>
+                    <div class="countdown" id="timer-${exam.id}">Calculating...</div>
+                    <div class="tasks-container">
+                `;
+
+                let currentTasks = [];
+                if (exam.type === "event") {
+                    currentTasks = [
+                        { id: "snacks", label: "🍿 Snacks Ready" },
+                        { id: "jersey", label: "👕 Jersey On" },
+                        { id: "alarm", label: "⏰ Alarm Set" }
+                    ];
+                } else {
+                    currentTasks = [
+                        { id: "theory", label: "Theory Read" },
+                        { id: "pq", label: "PQ Solved" },
+                        { id: "rev", label: "Final Revision" }
+                    ];
+                }
+
+                currentTasks.forEach(task => {
+                    const storageKey = `${exam.id}-${task.id}-all`; // Added "-all" to prevent mixing data with your personal tracker
+                    const isChecked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
+                    
+                    cardHTML += `
+                        <div class="task-item">
+                            <input type="checkbox" id="${storageKey}" class="task-checkbox" ${isChecked} onchange="saveProgress('${storageKey}', this.checked)">
+                            <label for="${storageKey}" class="task-label">${task.label}</label>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `</div>`;
+                card.innerHTML = cardHTML;
+                container.appendChild(card);
+            });
+        }
+
+        window.saveProgress = function(key, isChecked) {
+            localStorage.setItem(key, isChecked);
+        };
+
+        function updateTimers() {
+            const now = new Date().getTime();
+
+            exams.forEach(exam => {
+                const examTime = new Date(exam.date).getTime();
+                const eventEndTime = examTime + (2.5 * 60 * 60 * 1000); 
+                const cardElement = document.getElementById(`card-${exam.id}`);
+                const timerElement = document.getElementById(`timer-${exam.id}`);
+
+                if (!cardElement || !timerElement) return;
+
+                if (now > eventEndTime) {
+                    if (!cardElement.classList.contains("is-over")) {
+                        cardElement.classList.add("is-over");
+                    }
+                    timerElement.innerHTML = exam.type === "event" ? "Match Completed" : "Exam Completed";
+                    timerElement.style.color = "inherit";
+                    return;
+                } 
+                
+                if (now >= examTime && now <= eventEndTime) {
+                    timerElement.innerHTML = exam.type === "event" ? "Match Live! ⚽" : "Exam in Progress! ✍️";
+                    timerElement.style.color = exam.type === "event" ? "#b45309" : "#e53e3e"; 
+                    return;
+                }
+
+                const distance = examTime - now;
+                
+                const msPerSecond = 1000;
+                const msPerMinute = msPerSecond * 60;
+                const msPerHour = msPerMinute * 60;
+                const msPerDay = msPerHour * 24;
+
+                const days = Math.floor(distance / msPerDay);
+                const hours = Math.floor((distance % msPerDay) / msPerHour);
+                const minutes = Math.floor((distance % msPerHour) / msPerMinute);
+                const seconds = Math.floor((distance % msPerMinute) / msPerSecond);
+
+                timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            });
+        }
+
+        renderExams();
+        updateTimers(); 
+        setInterval(updateTimers, 1000);
+
+    </script>
+</body>
+</html>
