@@ -4,7 +4,7 @@
 
 *A personal, responsive dashboard to track my Spring 2026 semester finals at IIUC.*
 
-[![Live Demo](https://img.shields.io/badge/Live_Website-View_Here-2ea44f?style=for-the-badge&logo=github)](https://s-roy01.github.io/ExamRoutine/)
+[![Live Demo](https://img.shields.io/badge/Live_Website-View_Here-2ea44f?style=for-the-badge&logo=github)](https://s-roy01.github.io/ExamRoutine/All.html)
 [![Tech Stack](https://img.shields.io/badge/Built_With-HTML_%7C_CSS_%7C_JS-0a66c2?style=for-the-badge)](#)
 
 </div>
