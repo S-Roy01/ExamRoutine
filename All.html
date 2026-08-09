@@ -85,20 +85,26 @@
             border-top-color: var(--fifa-gold);
             background-color: var(--fifa-bg);
         }
-        
-        .fifa-card .course-code {
-            color: var(--fifa-gold);
-        }
-
-        .fifa-card .countdown {
-            background: var(--fifa-timer-bg);
-            color: var(--fifa-timer-text);
-        }
-
+        .fifa-card .course-code { color: var(--fifa-gold); }
+        .fifa-card .countdown { background: var(--fifa-timer-bg); color: var(--fifa-timer-text); }
         .fifa-card .task-checkbox:checked ~ .task-label {
             background-color: #eab308;
             border-color: #eab308;
             box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3);
+        }
+
+        /* Doomsday (Class Start) Styling */
+        .exam-card.doomsday-card {
+            border-top-color: #e53e3e;
+            background-color: #fff5f5;
+            border: 2px dashed #feb2b2;
+        }
+        .doomsday-card .course-code { color: #e53e3e; }
+        .doomsday-card .countdown { background: #fed7d7; color: #9b2c2c; }
+        .doomsday-card .task-checkbox:checked ~ .task-label {
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+            box-shadow: 0 2px 4px rgba(229, 62, 62, 0.3);
         }
 
         /* State when exam is over (Ash color) */
@@ -107,11 +113,9 @@
             background-color: #e2e8f0;
             opacity: 0.7;
             filter: grayscale(80%);
+            border: none;
         }
-
-        .exam-card.is-over * {
-            color: #4a5568 !important;
-        }
+        .exam-card.is-over * { color: #4a5568 !important; }
         
         .gap-badge {
             align-self: flex-start;
@@ -126,6 +130,7 @@
         .gap-warning { background-color: var(--warning-bg); color: var(--warning-text); }
         .gap-start { background-color: #e2e8f0; color: #4a5568; }
         .gap-fifa { background-color: var(--fifa-gold); color: white; }
+        .gap-vacation { background-color: #4299e1; color: white; }
 
         .course-code {
             font-size: 0.9rem;
@@ -164,10 +169,7 @@
             margin-bottom: 1.5rem;
         }
 
-        .exam-card.is-over .countdown {
-            background: #cbd5e0;
-            text-decoration: line-through;
-        }
+        .exam-card.is-over .countdown { background: #cbd5e0; text-decoration: line-through; }
 
         .tasks-container {
             margin-top: auto;
@@ -176,19 +178,8 @@
             gap: 0.5rem;
         }
 
-        /* Checkbox as toggle button styling */
-        .task-item {
-            position: relative;
-        }
-
-        .task-checkbox {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
+        .task-item { position: relative; }
+        .task-checkbox { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
         .task-label {
             display: inline-block;
             padding: 0.4rem 0.8rem;
@@ -203,28 +194,20 @@
             transition: all 0.2s ease;
         }
 
-        .task-item:hover .task-checkbox:not(:checked) ~ .task-label {
-            background-color: #e2e8f0;
-        }
-
+        .task-item:hover .task-checkbox:not(:checked) ~ .task-label { background-color: #e2e8f0; }
         .task-checkbox:checked ~ .task-label {
             background-color: var(--accent);
             color: white;
             border-color: var(--accent);
             box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
         }
-
         .exam-card.is-over .task-checkbox:checked ~ .task-label {
             background-color: #718096;
             border-color: #718096;
             box-shadow: none;
         }
 
-        @media (max-width: 600px) {
-            .header h1 { font-size: 2rem; }
-            .container { grid-template-columns: 1fr; }
-        }
-                .footer {
+        .footer {
             text-align: center;
             margin-top: 3rem;
             padding: 1.5rem 0;
@@ -233,31 +216,41 @@
             font-size: 0.9rem;
             font-weight: 600;
             letter-spacing: 0.05em;
-                }
-        
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 2rem; }
+            .container { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>EEE 3rd Semester Exam Tracker</h1>
-    
+        <h1>EEE Batch Exam Tracker</h1>
         <p>Revised Routine (15.07.2026) | B.Sc. in EEE</p>
     </div>
 
     <div class="container" id="exam-container">
-        </div>
+        <!-- Cards will be generated here by JavaScript -->
+    </div>
+
+    <div class="footer">
+        A Gift from Shuvajit Roy ( ET251057 ) <br><br>
+        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fs-roy01.github.io%2FExamRoutine%2FAll.html&count_bg=%2348BB78&title_bg=%231A365D&icon=&icon_color=%23E7E7E7&title=Visits&edge_flat=false" alt="Hits">
+    </div>
 
     <script>
-        // Updated array for the general batch (No Circuit 2, No Math 2, Added Stat)
         const exams = [
-            { id: "me2301", code: "ME-2301", title: "Fundamentals of Mechanical Engineering", date: "2026-07-15T09:30:00+06:00" },
-            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-19T09:30:00+06:00" },
+            { id: "me2301", code: "ME-2301", title: "Fundamentals of Mechanical Engineering", date: "2026-07-15T09:30:00+06:00", type: "exam" },
+            { id: "eee2303", code: "EEE-2303", title: "Electrical Machine-I", date: "2026-07-19T09:30:00+06:00", type: "exam" },
             { id: "fifa", code: "⚽ MATCH DAY", title: "🏆 World Cup Final: Spain vs Argentina", date: "2026-07-20T01:00:00+06:00", type: "event" },
-            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-22T09:30:00+06:00" },
-            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-26T09:30:00+06:00" },
-            { id: "stat2303", code: "STAT-2303", title: "Probability & Statistics", date: "2026-07-29T09:30:00+06:00" },
-            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-08-02T09:30:00+06:00" }
+            { id: "math2309", code: "MATH-2309", title: "Mathematics-III", date: "2026-07-22T09:30:00+06:00", type: "exam" },
+            { id: "chem2301", code: "CHEM-2301", title: "Chemistry", date: "2026-07-26T09:30:00+06:00", type: "exam" },
+            { id: "stat2303", code: "STAT-2303", title: "Probability & Statistics", date: "2026-07-29T09:30:00+06:00", type: "exam" },
+            { id: "eee2301", code: "EEE-2301", title: "Electronics-I", date: "2026-08-02T09:30:00+06:00", type: "exam" },
+            // The Tragic Return
+            { id: "doomsday", code: "💀 DOOMSDAY", title: "Vacation Ends (RIP Freedom) 😭", date: "2026-08-15T08:00:00+06:00", type: "doomsday" }
         ];
 
         const container = document.getElementById("exam-container");
@@ -271,15 +264,34 @@
                 const dateString = examDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 const dayString = examDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
 
-                // --- Gap Calculator Logic ---
+                // --- Gap & Vacation Calculator Logic ---
                 let gapBadgeHTML = "";
                 
                 if (exam.type === "event") {
                     gapBadgeHTML = `<div class="gap-badge gap-fifa">🎉 Study Break</div>`;
+                } else if (exam.type === "doomsday") {
+                    // Find the last exam to calculate how long the vacation was
+                    let prevExam = null;
+                    for (let i = index - 1; i >= 0; i--) {
+                        if (exams[i].type === "exam") {
+                            prevExam = exams[i];
+                            break;
+                        }
+                    }
+                    if (prevExam) {
+                        const prevDate = new Date(prevExam.date);
+                        const currDate = new Date(exam.date);
+                        prevDate.setHours(0,0,0,0);
+                        currDate.setHours(0,0,0,0);
+                        const diffTime = Math.abs(currDate - prevDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const vacationDays = diffDays - 1;
+                        gapBadgeHTML = `<div class="gap-badge gap-vacation">🏖️ ${vacationDays} Days of Freedom</div>`;
+                    }
                 } else {
                     let prevExam = null;
                     for (let i = index - 1; i >= 0; i--) {
-                        if (exams[i].type !== "event") {
+                        if (exams[i].type === "exam") {
                             prevExam = exams[i];
                             break;
                         }
@@ -290,10 +302,8 @@
                     } else {
                         const prevDate = new Date(prevExam.date);
                         const currDate = new Date(exam.date);
-                        
                         prevDate.setHours(0,0,0,0);
                         currDate.setHours(0,0,0,0);
-                        
                         const diffTime = Math.abs(currDate - prevDate);
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         const gapDays = diffDays - 1;
@@ -302,6 +312,138 @@
                             gapBadgeHTML = `<div class="gap-badge gap-warning">⚠️ No Gap (Back-to-back)</div>`;
                         } else if (gapDays === 1) {
                             gapBadgeHTML = `<div class="gap-badge gap-safe">⏳ 1 Day Gap</div>`;
+                        } else {
+                            gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
+                        }
+                    }
+                }
+
+                const card = document.createElement("div");
+                
+                // Assign correct styling class
+                if (exam.type === "event") card.className = "exam-card fifa-card";
+                else if (exam.type === "doomsday") card.className = "exam-card doomsday-card";
+                else card.className = "exam-card";
+                
+                card.id = `card-${exam.id}`;
+
+                let cardHTML = `
+                    ${gapBadgeHTML}
+                    <div class="course-code">${exam.code}</div>
+                    <div class="course-title">${exam.title}</div>
+                    <div class="exam-details">
+                        <span>📅 ${dateString}</span>
+                        <span>⏰ ${dayString}, ${timeString}</span>
+                    </div>
+                    <div class="countdown" id="timer-${exam.id}">Calculating...</div>
+                    <div class="tasks-container">
+                `;
+
+                // Custom Checklists
+                let currentTasks = [];
+                if (exam.type === "event") {
+                    currentTasks = [
+                        { id: "snacks", label: "🍿 Snacks Ready" },
+                        { id: "jersey", label: "👕 Jersey On" },
+                        { id: "alarm", label: "⏰ Alarm Set" }
+                    ];
+                } else if (exam.type === "doomsday") {
+                    currentTasks = [
+                        { id: "cry", label: "😭 Cry Internally" },
+                        { id: "sleep", label: "🛌 Mourn Sleep Schedule" },
+                        { id: "bag", label: "🎒 Find ID Card" }
+                    ];
+                } else {
+                    currentTasks = [
+                        { id: "theory", label: "Theory Read" },
+                        { id: "pq", label: "PQ Solved" },
+                        { id: "rev", label: "Final Revision" }
+                    ];
+                }
+
+                currentTasks.forEach(task => {
+                    const storageKey = `${exam.id}-${task.id}-all`; 
+                    const isChecked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
+                    
+                    cardHTML += `
+                        <div class="task-item">
+                            <input type="checkbox" id="${storageKey}" class="task-checkbox" ${isChecked} onchange="saveProgress('${storageKey}', this.checked)">
+                            <label for="${storageKey}" class="task-label">${task.label}</label>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `</div>`;
+                card.innerHTML = cardHTML;
+                container.appendChild(card);
+            });
+        }
+
+        window.saveProgress = function(key, isChecked) {
+            localStorage.setItem(key, isChecked);
+        };
+
+        function updateTimers() {
+            const now = new Date().getTime();
+
+            exams.forEach(exam => {
+                const examTime = new Date(exam.date).getTime();
+                // Assume classes last a while, let's just make the 'active' window 2.5 hours for consistency
+                const eventEndTime = examTime + (2.5 * 60 * 60 * 1000); 
+                const cardElement = document.getElementById(`card-${exam.id}`);
+                const timerElement = document.getElementById(`timer-${exam.id}`);
+
+                if (!cardElement || !timerElement) return;
+
+                if (now > eventEndTime) {
+                    if (!cardElement.classList.contains("is-over")) {
+                        cardElement.classList.add("is-over");
+                    }
+                    if (exam.type === "event") timerElement.innerHTML = "Match Completed";
+                    else if (exam.type === "doomsday") timerElement.innerHTML = "Welcome to Suffering";
+                    else timerElement.innerHTML = "Exam Completed";
+                    
+                    timerElement.style.color = "inherit";
+                    return;
+                } 
+                
+                if (now >= examTime && now <= eventEndTime) {
+                    if (exam.type === "event") {
+                        timerElement.innerHTML = "Match Live! ⚽";
+                        timerElement.style.color = "#b45309"; 
+                    } else if (exam.type === "doomsday") {
+                        timerElement.innerHTML = "Classes Have Begun 💀";
+                        timerElement.style.color = "#9b2c2c";
+                    } else {
+                        timerElement.innerHTML = "Exam in Progress! ✍️";
+                        timerElement.style.color = "#e53e3e"; 
+                    }
+                    return;
+                }
+
+                const distance = examTime - now;
+                const msPerSecond = 1000;
+                const msPerMinute = msPerSecond * 60;
+                const msPerHour = msPerMinute * 60;
+                const msPerDay = msPerHour * 24;
+
+                const days = Math.floor(distance / msPerDay);
+                const hours = Math.floor((distance % msPerDay) / msPerHour);
+                const minutes = Math.floor((distance % msPerHour) / msPerMinute);
+                const seconds = Math.floor((distance % msPerMinute) / msPerSecond);
+
+                timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            });
+        }
+
+        renderExams();
+        updateTimers(); 
+        setInterval(updateTimers, 1000);
+
+    </script>
+</body>
+</html>
+p-badge gap-safe">⏳ 1 Day Gap</div>`;
                         } else {
                             gapBadgeHTML = `<div class="gap-badge gap-safe">☕ ${gapDays} Days Gap</div>`;
                         }
