@@ -207,10 +207,10 @@
     </div>
 
     <script>
-        // 4th Semester (24XX) Subjects extracted directly from the new PDF
+        // Corrected 4th Semester (24XX) Subjects
         const exams = [
-            { id: "eee2401", code: "EEE-2401", title: "Electrical Machine-II", date: "2026-10-01T14:30:00+06:00", type: "exam" },
-            { id: "gebl2401", code: "GEBL-2401", title: "Bengali Language and Literature", date: "2026-10-04T09:30:00+06:00", type: "exam" },
+            { id: "eee2401", code: "EEE-2401", title: "Electrical Machine-II", date: "2026-09-30T14:30:00+06:00", type: "exam" },
+            { id: "gebl2401", code: "GEBL-2401", title: "Bengali Language and Literature", date: "2026-10-03T09:30:00+06:00", type: "exam" },
             { id: "eee2407", code: "EEE-2407", title: "Digital Electronics", date: "2026-10-05T09:30:00+06:00", type: "exam" },
             { id: "eee2415", code: "EEE-2415", title: "Transmission & Distribution", date: "2026-10-07T09:30:00+06:00", type: "exam" },
             { id: "math2409", code: "MATH-2409", title: "Mathematics-IV", date: "2026-10-10T09:30:00+06:00", type: "exam" },
@@ -311,7 +311,7 @@
             exams.forEach(exam => {
                 const examTime = new Date(exam.date).getTime();
                 
-                // Midterms are 1.5 hours duration (e.g. 09:30 AM to 11:00 AM)
+                // Midterms are 1.5 hours duration (e.g. 09:30 AM to 11:00 AM or 02:30 PM to 04:00 PM)
                 const examDurationMs = 1.5 * 60 * 60 * 1000; 
                 const eventEndTime = examTime + examDurationMs; 
                 
