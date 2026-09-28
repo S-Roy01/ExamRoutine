@@ -194,7 +194,7 @@
 
     <div class="header">
         <h1>4th Semester Midterm Tracker</h1>
-        <p>Autumn 2026 (Tentative) | B.Sc. in EEE</p>
+        <p>Autumn 2026 (Updated 28.09.2026) | B.Sc. in EEE</p>
     </div>
 
     <div class="container" id="exam-container">
@@ -207,15 +207,15 @@
     </div>
 
     <script>
-        // Corrected 4th Semester (24XX) Subjects
+        // Updated 4th Semester (24XX) Subjects based on 28.09.2026 routine
         const exams = [
             { id: "eee2401", code: "EEE-2401", title: "Electrical Machine-II", date: "2026-09-30T14:30:00+06:00", type: "exam" },
             { id: "gebl2401", code: "GEBL-2401", title: "Bengali Language and Literature", date: "2026-10-03T09:30:00+06:00", type: "exam" },
             { id: "eee2407", code: "EEE-2407", title: "Digital Electronics", date: "2026-10-05T09:30:00+06:00", type: "exam" },
             { id: "eee2415", code: "EEE-2415", title: "Transmission & Distribution", date: "2026-10-07T09:30:00+06:00", type: "exam" },
-            { id: "math2409", code: "MATH-2409", title: "Mathematics-IV", date: "2026-10-10T09:30:00+06:00", type: "exam" },
+            { id: "eee2411", code: "EEE-2411", title: "Electronics-II", date: "2026-10-10T09:30:00+06:00", type: "exam" }, // Swapped date
             { id: "acc2401", code: "ACC-2401", title: "Financial & Managerial Accounting", date: "2026-10-12T09:30:00+06:00", type: "exam" },
-            { id: "eee2411", code: "EEE-2411", title: "Electronics-II", date: "2026-10-14T09:30:00+06:00", type: "exam" }
+            { id: "math2409", code: "MATH-2409", title: "Mathematics-IV", date: "2026-10-14T09:30:00+06:00", type: "exam" }  // Swapped date
         ];
 
         const container = document.getElementById("exam-container");
@@ -283,7 +283,6 @@
                 ];
 
                 currentTasks.forEach(task => {
-                    // Added "autumn26" to key so it doesn't mix up with last semester's saved data
                     const storageKey = `autumn26-${exam.id}-${task.id}`; 
                     const isChecked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
                     
